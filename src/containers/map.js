@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { SPRITE_SIZE } from '../config/constants'
-import Enemy from './enemy.js'
 
 function getTileSprite(type){
   switch(type){
@@ -32,7 +31,7 @@ const MapTile = (props) => {
   } else if(typeof props.tile === 'object'){
     tileType = 'tile spider'
   }
-  if(tileType < 10) {
+
     return <div 
     className={tileType}
     style={{
@@ -41,14 +40,8 @@ const MapTile = (props) => {
     }}
     >
     </div>
-  } else {
-    return (
-      <Enemy
-        tileType={tileType}
-      />
-    )
-  }
-  }
+  } 
+
   
 
 const MapRow = (props) => {

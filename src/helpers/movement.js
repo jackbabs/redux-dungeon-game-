@@ -1,5 +1,6 @@
 import { SPRITE_SIZE, MAP_HEIGHT, MAP_WIDTH } from '../config/constants'
 import store from '../config/store'
+import { ADD_TILES, CHANGE_TILE } from '../actions'
 
 export default function handleMovement(player) {
 
@@ -29,6 +30,14 @@ export default function handleMovement(player) {
     }
   }
 
+  function getNextTile(oldPos, newPos){
+    const tiles = store.getState().map.tiles
+    const y = newPos[1] / SPRITE_SIZE
+    const x = newPos[0] / SPRITE_SIZE
+    const nextTile = tiles[y][x]
+    return nextTile
+  }
+
   function getWalkIndex() {
     const walkIndex = store.getState().player.walkIndex
     return walkIndex >= 7 ? 0 : walkIndex + 1
@@ -40,26 +49,19 @@ export default function handleMovement(player) {
   }
 
   function observeImpassable(oldPos, newPos) {
-    const tiles = store.getState().map.tiles
-    const y = newPos[1] / SPRITE_SIZE
-    const x = newPos[0] / SPRITE_SIZE
-    const nextTile = tiles[y][x]
+    let nextTile = getNextTile(oldPos, newPos)
     return nextTile < 5
   }
 
   function enemyEncountered(oldPos, newPos){
-    const tiles = store.getState().map.tiles
-    const y = newPos[1] / SPRITE_SIZE
-    const x = newPos[0] / SPRITE_SIZE
-    const nextTile = tiles[y][x]
-    return nextTile > 10
+    
+    let nextTile = getNextTile(oldPos, newPos)
+    if(typeof nextTile === 'object'){
+      return nextTile
+    } else {
+      return false
+    }
   }
-
-
-
-
-
-
 
   function dispatchMove(direction, newPos) {
     const walkIndex = getWalkIndex()
@@ -82,15 +84,31 @@ export default function handleMovement(player) {
 
     if(enemyEncountered(oldPos, newPos)){
       const damage = store.getState().player.level
-      console.log(damage)
-      store.dispatch({
-        type: 'ENEMY_HEALTH_DECREASE',
-        payload: {
-          damage: damage
-        }
-      })
-      const health = store.getState().enemy.health
-      console.log("Spider health: ", health)
+      let enemy = enemyEncountered(oldPos, newPos)
+      enemy.health = enemy.health - damage
+      if(enemy.health <= 0){
+        enemy = 0
+        const tiles = store.getState().map.tiles
+        const y = newPos[1] / SPRITE_SIZE
+        const x = newPos[0] / SPRITE_SIZE
+        store.dispatch({
+          type: 'CHANGE_TILE',
+          payload: {
+            enemy,
+            y,
+            x,
+          }
+        })
+        dispatchMove(direction, newPos)
+      }
+      console.log("Spider health", enemy.health)
+
+      // store.dispatch({
+      //   type: 'ENEMY_HEALTH_DECREASE',
+      //   payload: {
+      //     damage: damage
+      //   }
+      // })
     }
 
     if(observeBoundaries(oldPos, newPos) && observeImpassable(oldPos, newPos))
