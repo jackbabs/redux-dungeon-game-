@@ -8,6 +8,17 @@ module.exports = {
     filename: 'bundle.js'
   },
   module: {
+    rules: [
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {}  
+          }
+        ]
+      }
+    ],
     loaders: [{
       exclude: /node_modules/,
       loader: 'babel',

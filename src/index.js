@@ -1,15 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 
-import App from './components/app';
-import reducers from './reducers';
+import App from './app'
+import store from './config/store'
 
-const createStoreWithMiddleware = applyMiddleware()(createStore);
 
 ReactDOM.render(
-  <Provider store={createStoreWithMiddleware(reducers)}>
+  <Provider store={store}>
     <App />
   </Provider>
   , document.querySelector('.container'));
+
+// a thunk is a function that wraps an expression to delay its evaluation 
+
+function incrementAsync(){
+  return dispatch => {
+    setTimeout(() => {
+      dispatch(increment())
+    }, 1000)
+  }
+}
+
+export default store

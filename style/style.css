@@ -1,0 +1,26 @@
+
+
+.tile{
+  display: inline-flex;
+  background-color: #42b842;
+}
+.fog {
+  background-color: black;
+}
+.grass {
+  background-color: #42b842;
+}
+.rock {
+
+  background-image: url('../public/tiles/rock.png')
+}
+.tree {
+  background-image: url('../public/tiles/tree.png')
+}
+.chest {
+  background-image: url('../public/tiles/chest.png')
+}
+
+.spider {
+  background-image: url('../public/tiles/spider1.png');
+}
